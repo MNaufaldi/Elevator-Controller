@@ -10,7 +10,8 @@ reg [4:0] down;
 
 // output
 wire [2:0] floor_number;
-wire [1:0] dir;
+wire dir;
+wire move;
 wire [4:0] to_go;
 
 initial begin
@@ -23,8 +24,12 @@ initial begin
     reset = 0;
     #130
     floor = 5'b00001;
-    #200
+    #130
     floor = 5'b01010;
+    #130
+    floor = 5'b00101;
+    #40
+    floor = 5'b01000;
 end
 
 always begin
@@ -39,6 +44,7 @@ elevator_dut dut(
     down,
     floor_number,
     to_go,
+    move,
     dir
 );
 

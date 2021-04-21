@@ -6,6 +6,7 @@ module elevator_dut(
     down,
     floor_number,
     to_go,
+    move,
     dir
 );
 
@@ -19,11 +20,13 @@ input [4:0] down;
 // Output
 output floor_number;
 output dir;
+output move;
 output to_go;
 
 // Datatype
 reg [2:0] floor_number;
-reg [1:0] dir;
+reg dir;
+reg move;
 reg [2:0] current_state;
 reg [2:0] next_state;
 reg [4:0] to_go;
@@ -40,6 +43,8 @@ integer i;
 
 initial begin
     to_go = 5'b00000;
+    move = 0;
+    dir = 1;
 end
 
 always @(posedge clock) begin
@@ -60,88 +65,171 @@ always @(floor or up or down) begin
     end
 end
 
-// // Dir change
-// always @(dir) begin
-    
-// end
-
 
 always @(current_state or to_go or posedge clock) begin
     case (current_state)
         S0:
             // Idle
-            if (to_go[0] == 1) begin
+            if (to_go == 5'b00000) begin
+                move = 0;
                 next_state = S0;
-                dir = 2'b00;
+            end 
+            // Idle and serving a request
+            else if (to_go[0] == 1 && move == 1) begin
+                next_state = S0;
+                move = 0;
                 to_go[0] = 0;
             end
             // Up
-            else if (to_go > 5'b00001) begin
+            else if (to_go > 5'b00001 && dir == 1) begin
                 next_state = S1;
-                dir = 2'b10;           
+                dir = 1;
+                move = 1;           
+            end
+            // Next direction
+            else begin
+                if (dir == 1) begin
+                    dir = 0;
+                    move = 1;
+                end
+                else begin
+                    dir = 1;
+                    move = 1;
+                end
             end
         S1:
             // Idle
-            if (to_go[1] == 1) begin
+            if (to_go == 5'b00000) begin
+                move = 0;
                 next_state = S1;
-                dir = 2'b00;
+            end 
+            // Idle and serving a request
+            else if (to_go[1] == 1 && move == 1) begin
+                next_state = S1;
+                move = 0;
                 to_go[1] = 0;
             end
             // Up
-            else if (to_go > 5'b00010 ) begin
+            else if (to_go > 5'b00010 && dir == 1) begin
                 next_state = S2;
-                dir = 2'b10;           
+                dir = 1;
+                move = 1;           
             end
             // Down
-            else if (to_go < 5'b00010 ) begin
+            else if (to_go[1:0] < 10 && dir == 0) begin
                 next_state = S0;
-                dir = 2'b01;
+                dir = 0;
+                move = 1;
+            end
+            // Next direction
+            else begin
+                if (dir == 1) begin
+                    dir = 0;
+                    move = 1;
+                end
+                else begin
+                    dir = 1;
+                    move = 1;
+                end
             end
         S2:
             // Idle
-            if (to_go[2] == 1) begin
+            if (to_go == 5'b00000) begin
+                move = 0;
                 next_state = S2;
-                dir = 2'b00;
+            end 
+            // Idle and serving a request
+            else if (to_go[2] == 1 && move == 1) begin
+                next_state = S2;
+                move = 0;
                 to_go[2] = 0;
             end
             // Up
-            else if (to_go > 5'b00100 ) begin
+            else if (to_go > 5'b00100 && dir == 1) begin
                 next_state = S3;
-                dir = 2'b10;           
+                dir = 1;
+                move = 1;           
             end
             // Down
-            else if (to_go < 5'b00100 ) begin
+            else if (to_go[2:0] < 100 && dir == 0) begin
                 next_state = S1;
-                dir = 2'b01;
+                dir = 0;
+                move = 1;
+            end
+            // Next direction
+            else begin
+                if (dir == 1) begin
+                    dir = 0;
+                    move = 1;
+                end
+                else begin
+                    dir = 1;
+                    move = 1;
+                end
             end
         S3:
             // Idle
-            if (to_go[3] == 1) begin
+            if (to_go == 5'b00000) begin
+                move = 0;
                 next_state = S3;
-                dir = 2'b00;
+            end 
+            // Idle and serving a request
+            else if (to_go[3] == 1 && move == 1) begin
+                next_state = S3;
+                move = 0;
                 to_go[3] = 0;
-            end
             // Up
-            else if (to_go > 5'b01000 ) begin
+            end
+            else if (to_go > 5'b01000 && dir == 1) begin
                 next_state = S4;
-                dir = 2'b10;
+                dir = 1;
+                move = 1;
             end
             // Down
-            else if (to_go < 5'b01000 ) begin
+            else if (to_go[3:0] < 1000 && dir == 0) begin
                 next_state = S2;
-                dir = 2'b01;
+                dir = 0;
+                move = 1;
+            end
+            // Next direction
+            else begin
+                if (dir == 1) begin
+                    dir = 0;
+                    move = 1;
+                end
+                else begin
+                    dir = 1;
+                    move = 1;
+                end
             end
         S4:
             // Idle
-            if (to_go[4] == 1) begin
+            if (to_go == 5'b00000) begin
+                move = 0;
                 next_state = S4;
-                dir = 2'b00;
+            end 
+            // Idle and serving a request
+            else if (to_go[4] == 1 && move == 1) begin
+                next_state = S4;
+                move = 0;
                 to_go[4] = 0;
-            end
             // Down
-            else if (to_go < 5'b10000 ) begin
+            end
+            else if (to_go[4:0] < 10000 && dir == 0) begin
                 next_state = S3;
-                dir = 2'b01;
+                dir = 0;
+                move = 1;
+            end
+            // Next direction
+            else begin
+                if (dir == 1) begin
+                    dir = 0;
+                    move = 1;
+                end
+                else begin
+                    dir = 1;
+                    move = 1;
+                end
             end
 
     endcase
