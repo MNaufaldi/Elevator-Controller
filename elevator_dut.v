@@ -1,35 +1,19 @@
 module elevator_dut(
-    clock,
-    reset,
-    floor,
-    up,
-    down,
-    floor_number,
-    to_go,
-    move,
-    dir
+    input clock,
+    input reset,
+    input f1,
+    input f2,
+    input f3,
+    input f4,
+    input f5,
+    output reg [2:0] floor_number,
+  	output reg dir,
+  	output reg move,
+    output reg [4:0] to_go
 );
 
-// Input
-input clock;
-input reset;
-input [4:0] floor;
-input [4:0] up;
-input [4:0] down;
-
-// Output
-output floor_number;
-output dir;
-output move;
-output to_go;
-
-// Datatype
-reg [2:0] floor_number;
-reg dir;
-reg move;
 reg [2:0] current_state;
 reg [2:0] next_state;
-reg [4:0] to_go;
 
 // Constant
 parameter[2:0] S0 = 3'b000;
@@ -38,8 +22,6 @@ parameter[2:0] S2 = 3'b100;
 parameter[2:0] S3 = 3'b110;
 parameter[2:0] S4 = 3'b111;
 
-// ?
-integer i;
 
 initial begin
     to_go = 5'b00000;
@@ -57,11 +39,29 @@ always @(posedge clock) begin
 end
 
 // Copy Input
-always @(floor or up or down) begin
-    for (i = 0; i < 5; i = i + 1) begin
-        if (floor[i] == 1 || up[i] == 1 || down[i]) begin
-            to_go[i] = 1;
-        end
+always @(f1) begin
+    if (f1 == 1) begin
+        to_go[0] = 1;
+    end
+end
+always @(f2) begin
+    if (f2 == 1) begin
+        to_go[1] = 1;
+    end
+end
+always @(f3) begin
+    if (f3 == 1) begin
+        to_go[2] = 1;
+    end
+end
+always @(f4) begin
+    if (f4 == 1) begin
+        to_go[3] = 1;
+    end
+end
+always @(f5) begin
+    if (f5 == 1) begin
+        to_go[4] = 1;
     end
 end
 
