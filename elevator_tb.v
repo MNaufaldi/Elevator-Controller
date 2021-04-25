@@ -55,15 +55,15 @@ end
 elevator_dut dut(
     clock,
     reset,
-    floor_number,
-    to_go,
-    move,
     f1,
     f2,
     f3,
     f4,
     f5,
-    dir
+    floor_number,
+  	dir,
+  	move,
+    to_go
 );
 
 endmodule
